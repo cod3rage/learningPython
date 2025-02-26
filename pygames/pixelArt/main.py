@@ -47,7 +47,6 @@ class pixel_drawer:
     while self.running:
       self.inputs()
       self.render()
-      self.update()
 
       pygame.display.update()
       self.screen.blit(self.grid_surface,(144,10))
@@ -98,7 +97,7 @@ class pixel_drawer:
 
               with open('saves/image_data.json','w') as jsonSave:
                 json.dump(savefile,jsonSave)
-              pygame.image.save(self.grid_surface,'saves/image.png')
+              pygame.image.save(pygame.transform.scale(self.grid_surface,(16,16)),'saves/image.png')
 
             elif button['signal'] == 'load':
               self.grid = {}
@@ -126,9 +125,6 @@ class pixel_drawer:
           self.draw(mouse_pos,self.color1)
         else:
           self.erase(mouse_pos)
-
-  def update(self):
-    pass
 
   def draw(self,mouse_pos=(0,0),color=(255,255,255)):
     base_x,base_y = (mouse_pos[0] - 144)//30  ,  (mouse_pos[1] - 10)//30
