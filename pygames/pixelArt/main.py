@@ -35,6 +35,8 @@ class pixel_drawer:
       {'pos':315,'signal':'black','color':(0,0,0)},
       {'pos':345,'signal':'white','color':(255,255,255)},
 
+      {'pos':375,'signal':'eraser'},
+
       {'pos':445,'signal':'save'},
       {'pos':470,'signal':'load'},
     ]
@@ -104,14 +106,26 @@ class pixel_drawer:
                 for pos,color in json.load(jsonSave).items():
                   x, y = pos.split(':')
                   self.grid[pos] = [pygame.rect.Rect(int(x)*30,int(y)*30,30,30),tuple(color)]
+            
+            elif button['signal'] == 'eraser':
+              if event.button==1:
+                self.color0 = False
+              else:
+                self.color1 = False
 
 
     if 144 <= mouse_pos[0] <= 624 and  10 <= mouse_pos[1] <= 490:
       mouse_pressed = pygame.mouse.get_pressed()
       if mouse_pressed[0]:
-        self.draw(mouse_pos,self.color0)
+        if self.color0:
+          self.draw(mouse_pos,self.color0)
+        else:
+          self.erase(mouse_pos)
       elif mouse_pressed[2]:
-        self.draw(mouse_pos,self.color1)
+        if self.color1:
+          self.draw(mouse_pos,self.color1)
+        else:
+          self.erase(mouse_pos)
 
   def update(self):
     pass
