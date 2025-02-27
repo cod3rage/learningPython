@@ -1,6 +1,6 @@
 import json
 import pygame
-
+import math
     
 class pixel_drawer:
   def __init__(self):
@@ -20,8 +20,6 @@ class pixel_drawer:
     self.color0 = (255,0,0)
     self.color1 = (0,0,255)
 
-   
-
     self.buttons = [
       {'pos':15,'signal':'clear'},
       
@@ -37,9 +35,27 @@ class pixel_drawer:
 
       {'pos':375,'signal':'eraser'},
 
-      {'pos':445,'signal':'save'},
-      {'pos':470,'signal':'load'},
+      {'pos':445,'signal':'save','border':(0,255,0)},
+      {'pos':470,'signal':'load','border':(0,255,0)},
     ]
+
+    self.button_geometry = []
+
+    corner_radius = 2
+
+    for val in self.buttons:
+      radius = min( 20/2 , 124/2 ,corner_radius )
+      offset0_x, offset0_y=(9+radius, val['pos']), (9, val['pos']+radius)
+      offset1_x, offset1_y=(133-radius, val['pos']), (133, val['pos']+radius)
+      offset2_x, offset2_y=(9+radius, val['pos']+20), (9, val['pos']+20-radius)
+      offset3_x, offset3_y=(133-radius, val['pos']+20), (133, val['pos']+20-radius)
+
+      color = val['color'] if 'color' in val else (255,0,0)
+      if 'border' in val: color = val['border']
+
+      geometry = [[offset0_y,offset0_x,offset1_x, offset1_y,offset3_y,offset3_x,offset2_x,offset2_y], color, not 'color' in val]
+      self.button_geometry.append(geometry)
+      
 
   
   def run(self):
@@ -66,8 +82,11 @@ class pixel_drawer:
     self.grid_surface.fill(pygame.color.Color(0,0,0,0))
     for val in self.grid.values():
       pygame.draw.rect(self.grid_surface,val[1],val[0])
-    for things in self.buttons:
-      pygame.draw.rect(self.screen, (255,255,255),pygame.rect.Rect(9,things['pos'],124,20))
+    for button in self.button_geometry:
+      if button[2]:
+        pygame.draw.polygon(self.screen,button[1],button[0],1)
+      else:
+        pygame.draw.polygon(self.screen,button[1],button[0])
     self.screen.blit(self.grid_surface,(144,10))
   
   def inputs(self):
