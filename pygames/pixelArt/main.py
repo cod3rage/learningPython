@@ -24,6 +24,7 @@ class pixel_drawer:
 
         self.buttons = [
             {'pos': 15, 'signal': 'clear'},
+            {'pos': 40, 'signal':'fill', 'border':(255,255,255)},
 
             {'pos': 105, 'signal': 'orange', 'color': (255, 165, 0)},
             {'pos': 135, 'signal': 'red', 'color': (255, 0, 0)},
@@ -150,6 +151,8 @@ class pixel_drawer:
                             else:
                                 self.color1 = False
                                 self.mouse1 = button['signal']
+                        elif button['signal'] == 'fill':
+                            self.fill(self.color0 or self.color1 or (0,0,0))
 
         if 144 <= mouse_pos[0] <= 624 and 10 <= mouse_pos[1] <= 490:
             mouse_pressed = pygame.mouse.get_pressed()
@@ -163,6 +166,7 @@ class pixel_drawer:
                     self.draw(mouse_pos, self.color1)
                 else:
                     self.erase(mouse_pos)
+
 
     def draw(self, mouse_pos=(0, 0), color=(255, 255, 255)):
         base_x, base_y = (mouse_pos[0] - 144) // 30, (mouse_pos[1] - 10) // 30
@@ -180,6 +184,18 @@ class pixel_drawer:
             return
         chunk = str((mouse_pos[0] - 144) // 30) + ':' + str((mouse_pos[1] - 10) // 30)
         if chunk in self.grid: self.erase(chunk, True)
+    
+    def fill(self,color=(0,0,0)):
+      for y in range(16):
+          for x in range(16):
+              chunk = str(x)+':'+str(y)
+              if chunk in self.grid:
+                  if not ('bgc' in self.grid[chunk]):
+                      continue
+                  self.erase(chunk, True)
+              
+              self.grid[chunk] = [pygame.rect.Rect(x * 30, y * 30, 30, 30), color,'bgc']
+                  
 
 
 pixel_drawer().run()
